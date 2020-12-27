@@ -69,18 +69,18 @@ function start() {
         var elapsed_time = '00:00:00' //elapsed time variable
         
         //run following code on an interval of 600ms
-		setInterval(function () {
+	setInterval(function () {
             console.log('tick')
             if(counting_qs){tick_counter = tick_counter + 1}
             isrecent = false //default to false, just in case
             var opts = reader.read() || []; //read chatbox, new lines stored in opts
             
-			for (var a = 0; a < opts.length; a++) { //loop through new lines
+	    for (var a = 0; a < opts.length; a++) { //loop through new lines
 
                 console.log(opts[a].text);
                 
                 //regex match to reset times functionality
-				if (opts[a].text.match(/(Your application has been accepted|All roles have been cleared)/i)) { 
+		if (opts[a].text.match(/(Your application has been accepted|All roles have been cleared)/i)) { 
 
                     //check if captured message is recent
                     msg_time = hmsToSeconds(opts[a].text.substring(1,9)) * 1000 //ms
@@ -160,7 +160,7 @@ function start() {
                 //deployment regex: /You have earned.*thaler.*/g
                 //testing regex:    /You've set your role to.*/g
                 //regex match to WAVE END functionality
-				if (opts[a].text.match(/You've set your role to.*/g)) {
+		if (opts[a].text.match(/You've set your role to.*/g)) {
 
                     //check if captured message is recent
                     msg_time = hmsToSeconds(opts[a].text.substring(1,9)) * 1000 //ms
@@ -200,6 +200,6 @@ function start() {
             
 		}, 600);
 	} else {
-		$("#overview").html('<a href="alt1://addapp/http://holycoil.nl/alt1/aod/appconfig.json">Click here to add this app</a>'); 
+	    $("#overview").html('<a href="alt1://addapp/http://holycoil.nl/alt1/aod/appconfig.json">Click here to add this app</a>'); 
 	}
 }
