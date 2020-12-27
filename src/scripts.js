@@ -3,20 +3,8 @@
 ///<reference path="../../../alt1lib.js.js">
 ///<reference path="../../../imagelibs/chatbox.js">
 
-var reader = new ChatBoxReader();
-
-reader.readargs = {
-	colors: [
-		a1lib.mixcolor(255, 0, 255),
-		a1lib.mixcolor(0, 255, 255),
-		a1lib.mixcolor(255, 0, 0),
-		a1lib.mixcolor(255, 255, 255),
-		a1lib.mixcolor(127, 169, 255)
-	],
-	backwards: true
-};
-
-var times = [];
+////============================================================================================================================
+//utility functions
 
 function hmsToSeconds(s) {
     var b = s.split(':');
@@ -49,36 +37,52 @@ function addQSRow(content)
          var cell1 = row.insertCell(0);
          cell1.innerHTML = content;
 }
+//============================================================================================================================
+//define alt1 chatbox reader
+var reader = new ChatBoxReader();
 
+reader.readargs = {
+	colors: [
+		a1lib.mixcolor(255, 0, 255),
+		a1lib.mixcolor(0, 255, 255),
+		a1lib.mixcolor(255, 0, 0),
+		a1lib.mixcolor(255, 255, 255),
+		a1lib.mixcolor(127, 169, 255)
+	],
+	backwards: true
+};
+
+//main function
 function start() {
 
 	if (window.alt1) {
         reader.find();
 
-        //ul = document.createElement('ul');
-        //document.getElementById('overview').appendChild(ul);
-        var hasstart = false
-        var counting_qs = false
-        var timestring_end = ''
-        var timestring_start = ''
-        var wave_counter = 1
-        var tick_counter = 0
-        var isrecent = false
-        var wave_regex = ''
-		
+        //define variables
+        var counting_wave = false     //are we currently counting wave time?
+        var counting_qs = false       //are we currently counting qs time?
+        var timestring_end = ''       //wave ending timestamp to be captured
+        var timestring_start = ''     //wave start timestamp to be captured
+        var wave_counter = 1          //naive 1-9 counter, to be changed to regex matching later?
+        var tick_counter = 0          //counter for # ticks passed during a qs
+        var isrecent = false          //boolean for if a message captured is recent enough to be considered
+        var elapsed_time = '00:00:00' //elapsed time variable
+        
+        //run following code on an interval of 600ms
 		setInterval(function () {
-
             console.log('tick')
             if(counting_qs){tick_counter = tick_counter + 1}
-            isrecent = false
-            var opts = reader.read() || [];
+            isrecent = false //default to false, just in case
+            var opts = reader.read() || []; //read chatbox, new lines stored in opts
             
-			for (var a = 0; a < opts.length; a++) {
+			for (var a = 0; a < opts.length; a++) { //loop through new lines
 
                 console.log(opts[a].text);
                 
+                //regex match to reset times functionality
 				if (opts[a].text.match(/(Your application has been accepted|All roles have been cleared)/i)) { 
 
+                    //check if captured message is recent
                     msg_time = hmsToSeconds(opts[a].text.substring(1,9)) * 1000 //ms
                     system_tstring = new Date().toTimeString().substring(0,8); // 24:mm:ss 
                     system_time =  hmsToSeconds(system_tstring) * 1000 //ms
@@ -87,13 +91,16 @@ function start() {
                     console.log(system_tstring)
                     console.log(opts[a].text.substring(1,9))
 
+                    //if message is recent, reset all variables and clear tables. Reset elapsed time.
                     if(isrecent){
-                        times = [];
                         console.log('Reset!')
-                        hasstart = false
+
+                        //reset variables
+                        counting_wave = false
                         wave_counter = 1
                         tick_counter = 0
                         counting_qs = false
+                        elapsed_time = '00:00:00'
 
                         //remove all children from all tables
                         var table = document.getElementById("overview");
@@ -108,18 +115,21 @@ function start() {
                             table.deleteRow(i);
                         }
 
-                        isrecent = false
+                        //reset elapsed time
+                        document.getElementById("myText").innerHTML = elapsed_time;
+                        isrecent = false //reset to false
                     }
                 }
                 
-                //opts[a].text.match(/.*Wave:*/i)
-                //testing:  /You have set your game to.*/i
+                //deploy regex:   /.*Wave:*/i
+                //testing regex:  /You have set your game to.*/i
+                //regex match to WAVE START functionality
                 if (opts[a].text.match(/You have set your game to.*/i)) { 
-
 
                     console.log('timer started...')
                     console.log(timestring_start)
 
+                    //check if captured message is recent
                     msg_time = hmsToSeconds(opts[a].text.substring(1,9)) * 1000 //ms
                     system_tstring = new Date().toTimeString().substring(0,8); // 24:mm:ss 
                     system_time =  hmsToSeconds(system_tstring) * 1000 //ms
@@ -128,27 +138,31 @@ function start() {
                     console.log(system_tstring)
                     console.log(opts[a].text.substring(1,9))
 
+                    //if message is recent, store the wave start timestamp
                     if(isrecent){
                         counting_qs = false
-                        hasstart = true
-                        timestring_start = opts[a].text.substring(1,9);
+                        counting_wave = true
+                        timestring_start = opts[a].text.substring(1,9); //wave start timestamp
+
+                        //if tick counter has been running, add a row to the qs table with qs time.
                         if(tick_counter > 0){
                             addQSRow(tick_counter);
-                            tick_counter = 0 //reset counter
+                            //add qs time to elapsed time
+                            elapsed_time = secondsToHMS(hmsToSeconds(elapsed_time) + Math.round(tick_counter*0.6))
+                            document.getElementById("myText").innerHTML = elapsed_time;
+                            //reset tick counter
+                            tick_counter = 0 
                         }
-                        
-                        isrecent = false
+                        isrecent = false //reset to false
                     }
-
-                    
                 }
 
-                //var minmatch = opts[a].text.match(/You have earned.*thaler.*/g);
-                //testing: /You've set your role to.*/g
-                var minmatch = opts[a].text.match(/You've set your role to.*/g);
+                //deployment regex: /You have earned.*thaler.*/g
+                //testing regex:    /You've set your role to.*/g
+                //regex match to WAVE END functionality
+				if (opts[a].text.match(/You've set your role to.*/g)) {
 
-				if (minmatch) {
-
+                    //check if captured message is recent
                     msg_time = hmsToSeconds(opts[a].text.substring(1,9)) * 1000 //ms
                     system_tstring = new Date().toTimeString().substring(0,8); // 24:mm:ss 
                     system_time =  hmsToSeconds(system_tstring) * 1000 //ms
@@ -157,24 +171,27 @@ function start() {
                     console.log(system_tstring)
                     console.log(opts[a].text.substring(1,9))
 
-                    if (hasstart && isrecent) {
+                    //is message is recent and we are counting wave time, get the timestamp difference and add row to wave table
+                    if (counting_wave && isrecent) {
                         console.log('entered math zone')
 
+                        //get the time delta of wave start and wave end
                         timestring_end = opts[a].text.substring(1,9)
                         var deltatime = secondsToHMS(hmsToSeconds(timestring_end) - hmsToSeconds(timestring_start))
                         time_output = deltatime
 
-                        times.push(time_output);
-                        var numberPattern = /\d+/g;
-                        //wavecounter for testing, wave regex for prod
+                        //add time delta to html table and update variables
                         addWaveRow('Wave ' + wave_counter + ':', time_output)
-                        wave_counter = wave_counter + 1
+                        wave_counter = wave_counter + 1 //Wave X: on html table
                         counting_qs = true
+                        
+                        //update elapsed time with wave time
+                        elapsed_time = secondsToHMS(hmsToSeconds(elapsed_time) + hmsToSeconds(deltatime))
+                        document.getElementById("myText").innerHTML = elapsed_time;
 
-                        isrecent = false
+                        isrecent = false //reset to false
                         }
-                }
-                
+                }   
             }
             
 
