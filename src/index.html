@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="../css/alt1/nis.css">
+	<link rel="stylesheet" type="text/css" href="../css/alt1/alt1-currentskin/skinstyle.css">
+	<link rel="stylesheet" type="text/css" href="https://runeapps.org/runeappslib.css">
+
+	<style>
+		tbody td{
+		  padding: 7px;
+		  text-align:center;
+		}
+
+		tbody tr{
+			line-height:7px;
+		}
+		tbody tr:nth-child(odd){
+  		background-color: #7b91b3;
+		  color: #1b3154;
+		  line-height: 10px;
+		}
+
+		* {
+ 		 box-sizing: border-box;
+		}
+
+		.column {
+		float: left;
+		width: 33.3%;
+		padding: 7px;
+		}
+
+		/* Clearfix (clear floats) */
+		.row::after {
+		content: "";
+		clear: both;
+		display: table;
+		}
+
+		p {
+    	text-align: center;
+		}
+	</style>
+</head>
+
+<body class="nis" style="background-image: url('alt1-currentskin/background.png');" onload="start();">
+	
+	<!-- jQuery scripts -->
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/jquery.js"></script>
+	<!-- runeapps scripts -->
+	<script type="text/javascript" src="https://runeapps.org/runeappslib.js"></script>
+	<script type="text/javascript" src="https://runeapps.org/imagedetect.js"></script>
+	<script type="text/javascript" src="https://runeapps.org/alt1lib.js"></script>
+	<script type="text/javascript" src="https://runeapps.org/imagelibs/ocr.js"></script>
+	<script type="text/javascript" src="https://runeapps.org/imagelibs/chatbox.js"></script>
+	<!-- BA Wave main script -->
+	<script type="text/javascript" src="scripts.js"></script>
+	
+
+	<p style="color:white;font:verdana">Barbarian Assault Wave Timer</p>
+
+	<div class="row">
+		<div class="column">
+		  <img src="../ranger.png" alt="Snow" style="width:50%">
+		</div>
+		<div class="column">
+		  <img src="../fighter.png" alt="Forest" style="width:35%">
+		</div>
+		<div class="column">
+		  <img src="../runner.png" alt="Mountains" style="width:30%">
+		</div>
+	  </div>
+
+	<table id="overview" style="float: left; width:150px;">
+		<tr>
+			<th>Wave</th>
+			<th>Time</th>
+		</tr>		
+	</table>
+
+	<table id="overview2" style="float: left; width:75px;">
+		<tr>
+			<th>QS(t)</th>
+		</tr>
+	</table>
+
+</body>
+</html>
