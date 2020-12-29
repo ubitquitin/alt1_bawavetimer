@@ -61,7 +61,7 @@ reader.readargs = {
 function start() {
     
     a1lib.identifyUrl("appconfig.json");
-	if (window.alt1) {
+    if (window.alt1) {
         reader.find();
 
         //define variables
@@ -77,19 +77,19 @@ function start() {
         var elapsed_time = '00:00.0' //elapsed time variable
         
         //run following code on an interval of 600ms
-		setInterval(function () {
+	setInterval(function () {
             console.log('tick')
             if(counting_qs){tick_counter = tick_counter + 1}
             if(counting_wave){wave_counter = wave_counter + 1}
             isrecent = false //default to false, just in case
             var opts = reader.read() || []; //read chatbox, new lines stored in opts
             
-			for (var a = 0; a < opts.length; a++) { //loop through new lines
+	    for (var a = 0; a < opts.length; a++) { //loop through new lines
 
                 console.log(opts[a].text);
                 
                 //regex match to reset times functionality
-				if (opts[a].text.match(/(Your application has been accepted|You've set your role to .*)/i)) { 
+		if (opts[a].text.match(/(Your application has been accepted|You've set your role to .*)/i)) { 
 
                     //check if captured message is recent
                     msg_time = HMSToSeconds(opts[a].text.substring(1,9)) //hh:(mm:ss.0)
@@ -162,7 +162,7 @@ function start() {
                 //deployment regex: /You have earned.*thaler.*/g
                 //testing regex:    /You've set your role to.*/g
                 //regex match to WAVE END functionality
-				if (opts[a].text.match(/You have earned.*thaler.*/g)) {
+		if (opts[a].text.match(/You have earned.*thaler.*/g)) {
 
                     //check if captured message is recent
                     msg_time = HMSToSeconds(opts[a].text.substring(1,9)) //hh:(mm:ss.0)
@@ -196,8 +196,8 @@ function start() {
             
 
             
-		}, 100);
-	} else {
-		$("#overview").html('<a href="alt1://addapp/http://holycoil.nl/alt1/aod/appconfig.json">Click here to add this app</a>'); 
-	}
+	}, 100);
+    } else {
+	$("#overview").html('<a href="alt1://addapp/http://holycoil.nl/alt1/aod/appconfig.json">Click here to add this app</a>'); 
+    }
 }
