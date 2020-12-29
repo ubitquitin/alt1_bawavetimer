@@ -3,7 +3,7 @@
 	"description": "minimal alt1 webpack/ts example test app",
 	"appUrl": "./index.html",
 	"configUrl": "./appconfig.json",
-	"iconUrl": "",
+	"iconUrl": "./healer.png",
 	"defaultWidth": 250,
 	"defaultHeight": 250,
 	"minWidth": 250,
