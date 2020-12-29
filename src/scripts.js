@@ -59,8 +59,9 @@ reader.readargs = {
 
 //main function
 function start() {
-
-    if (window.alt1) {
+    
+    a1lib.identifyUrl("appconfig.json");
+	if (window.alt1) {
         reader.find();
 
         //define variables
@@ -76,19 +77,19 @@ function start() {
         var elapsed_time = '00:00.0' //elapsed time variable
         
         //run following code on an interval of 600ms
-	setInterval(function () {
+		setInterval(function () {
             console.log('tick')
             if(counting_qs){tick_counter = tick_counter + 1}
             if(counting_wave){wave_counter = wave_counter + 1}
             isrecent = false //default to false, just in case
             var opts = reader.read() || []; //read chatbox, new lines stored in opts
             
-	    for (var a = 0; a < opts.length; a++) { //loop through new lines
+			for (var a = 0; a < opts.length; a++) { //loop through new lines
 
                 console.log(opts[a].text);
                 
                 //regex match to reset times functionality
-		if (opts[a].text.match(/(Your application has been accepted|All roles have been cleared)/i)) { 
+				if (opts[a].text.match(/(Your application has been accepted|You've set your role to .*)/i)) { 
 
                     //check if captured message is recent
                     msg_time = HMSToSeconds(opts[a].text.substring(1,9)) //hh:(mm:ss.0)
@@ -148,7 +149,7 @@ function start() {
                             addQSRow(tick_counter);
 
                             //add qs time to elapsed time
-                            elapsed_time = secondsToHMS(MSToSeconds(elapsed_time) + (tick_counter*0.6))
+                            elapsed_time = secondsToHMS(MSToSeconds(elapsed_time) + (tick_counter*0.1))
                             document.getElementById("myText").innerHTML = elapsed_time;
 
                             //reset tick counter
@@ -161,7 +162,7 @@ function start() {
                 //deployment regex: /You have earned.*thaler.*/g
                 //testing regex:    /You've set your role to.*/g
                 //regex match to WAVE END functionality
-		if (opts[a].text.match(/You have earned.*thaler.*/g)) {
+				if (opts[a].text.match(/You have earned.*thaler.*/g)) {
 
                     //check if captured message is recent
                     msg_time = HMSToSeconds(opts[a].text.substring(1,9)) //hh:(mm:ss.0)
@@ -176,13 +177,13 @@ function start() {
                         counting_wave = false
 
                         //add time delta to html table and update variables
-                        var deltatime = secondsToHMS(wave_counter*0.6)
+                        var deltatime = secondsToHMS(wave_counter*0.1)
                         addWaveRow('Wave ' + wave_reg + ':', deltatime)
                         //wave_number = wave_number + 1 //Wave X: on html table
 
                         //update elapsed time with wave time
 
-                        elapsed_time = secondsToHMS(MSToSeconds(elapsed_time) + (wave_counter*0.6))
+                        elapsed_time = secondsToHMS(MSToSeconds(elapsed_time) + (wave_counter*1))
                         document.getElementById("myText").innerHTML = elapsed_time;
 
                         wave_counter = 0
@@ -195,7 +196,7 @@ function start() {
             
 
             
-		}, 600);
+		}, 100);
 	} else {
 		$("#overview").html('<a href="alt1://addapp/http://holycoil.nl/alt1/aod/appconfig.json">Click here to add this app</a>'); 
 	}
